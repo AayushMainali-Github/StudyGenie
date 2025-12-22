@@ -164,11 +164,17 @@ const QuizView = () => {
                                     ? isCorrect 
                                         ? 'border-green-500 bg-green-50' 
                                         : 'border-red-500 bg-red-50'
-                                    : 'border-black hover:bg-black hover:text-white'
+                                    : (isCorrect === false && idx === q.correctAnswer)
+                                        ? 'border-green-500 bg-green-50 animate-pulse'
+                                        : 'border-black hover:bg-black hover:text-white'
                             }`}
                         >
                             <div className="flex items-center gap-4 relative z-10">
-                                <span className={`text-[10px] font-black w-6 h-6 border flex items-center justify-center shrink-0 ${selectedOption === idx ? 'border-current' : 'border-gray-200 group-hover:border-white/30'}`}>
+                                <span className={`text-[10px] font-black w-6 h-6 border flex items-center justify-center shrink-0 ${
+                                    (selectedOption === idx || (isCorrect === false && idx === q.correctAnswer)) 
+                                        ? 'border-current' 
+                                        : 'border-gray-200 group-hover:border-white/30'
+                                }`}>
                                     {String.fromCharCode(65 + idx)}
                                 </span>
                                 <div className="text-lg font-bold tracking-tight prose prose-slate">

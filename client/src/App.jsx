@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import NoteUpload from './pages/NoteUpload';
 import NoteView from './pages/NoteView';
 import FlashcardReview from './pages/FlashcardReview';
+import QuizView from './pages/QuizView';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -120,6 +121,7 @@ function App() {
             <Route path="/notes/upload" element={<PrivateRoute><NoteUpload /></PrivateRoute>} />
             <Route path="/notes/:id" element={<PrivateRoute><NoteView /></PrivateRoute>} />
             <Route path="/flashcards/:noteId" element={<PrivateRoute><FlashcardReview /></PrivateRoute>} />
+            <Route path="/quiz/:noteId" element={<PrivateRoute><QuizView /></PrivateRoute>} />
           </Routes>
         </div>
       </AuthProvider>

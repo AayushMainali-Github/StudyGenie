@@ -15,7 +15,7 @@ const generateQuiz = async (req, res) => {
             return res.status(404).json({ message: 'Note not found' });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         const prompt = `
         You are an elite examiner. Create a challenging 5-10 question multiple-choice quiz based on the following study notes.

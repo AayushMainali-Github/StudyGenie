@@ -153,20 +153,21 @@ const NoteView = () => {
                      >
                         <div className="flex justify-between items-start mb-6">
                             <i className="fa-solid fa-bolt-lightning text-3xl text-white"></i>
-                            <span className="text-[10px] font-black uppercase tracking-widest bg-white text-black px-3 py-1">PHASE 04</span>
                         </div>
                         <h4 className="text-2xl font-black mb-3">SYNAPTIC FLASHCARDS</h4>
                         <p className="text-gray-400 font-normal text-sm leading-relaxed">Deconstruct intelligence into mnemonic triggers for accelerated recall.</p>
                      </Link>
 
-                     <div className="p-10 bg-white border-[3px] border-black group hover:translate-x-2 transition-all cursor-pointer opacity-50">
+                     <Link 
+                        to={`/quiz/${id}`}
+                        className="p-10 bg-white border-[3px] border-black group hover:translate-x-2 transition-all cursor-pointer block"
+                     >
                         <div className="flex justify-between items-start mb-6">
                             <i className="fa-solid fa-shield-halved text-3xl text-black"></i>
-                            <span className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-3 py-1">PHASE 05</span>
                         </div>
-                        <h4 className="text-2xl font-black mb-3">VALIDATION ENGINE</h4>
-                        <p className="text-gray-500 font-normal text-sm leading-relaxed">Quantify knowledge mastery through adaptive AI assessments.</p>
-                     </div>
+                        <h4 className="text-2xl font-black mb-3">BATTLEFIELD QUIZZES</h4>
+                        <p className="text-gray-500 font-normal text-sm leading-relaxed">Simulate high-stakes examination environments with randomized challenges.</p>
+                     </Link>
                 </div>
             </div>
         </div>
