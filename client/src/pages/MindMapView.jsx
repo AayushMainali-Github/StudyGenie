@@ -65,6 +65,9 @@ const MindMapView = () => {
         }
     };
 
+    const toggleDebug = () => setShowDebug(!showDebug);
+    const [showDebug, setShowDebug] = useState(false);
+
     if (loading) return <div className="min-h-screen flex items-center justify-center text-xs font-black uppercase tracking-[0.3em] animate-pulse">Calculating Architecture...</div>;
 
     return (
@@ -80,22 +83,43 @@ const MindMapView = () => {
                             <h1 className="text-4xl font-black text-black tracking-tighter uppercase italic">Architecture of Knowledge</h1>
                         </div>
                     </div>
-                    {!mindmapData && (
+                    <div className="flex gap-4">
                         <button 
-                            onClick={handleGenerate}
-                            disabled={generating}
-                            className="px-8 py-4 bg-black text-white font-black uppercase tracking-widest text-xs hover:bg-gray-800 transition-all border-b-4 border-gray-600 disabled:bg-gray-400"
+                            onClick={toggleDebug}
+                            className="px-6 py-4 bg-white text-black border-[3px] border-black font-black uppercase tracking-widest text-[10px] hover:bg-gray-50 transition-all shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1"
                         >
-                            {generating ? 'Mapping Synapses...' : 'Generate Map'}
+                            {showDebug ? 'Hide Source' : 'Debug Source'}
                         </button>
-                    )}
+                        {!mindmapData && (
+                            <button 
+                                onClick={handleGenerate}
+                                disabled={generating}
+                                className="px-8 py-4 bg-black text-white font-black uppercase tracking-widest text-xs hover:bg-gray-800 transition-all border-b-4 border-gray-600 disabled:bg-gray-400"
+                            >
+                                {generating ? 'Mapping Synapses...' : 'Generate Map'}
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {mindmapData ? (
-                    <div className="p-12 border-[3px] border-black bg-white shadow-[20px_20px_0px_0px_rgba(0,0,0,0.05)] overflow-auto min-h-[600px] flex items-center justify-center">
-                        <div className="mermaid w-full text-center" ref={mermaidRef}>
-                            {mindmapData}
+                    <div className="space-y-8">
+                        <div className="p-12 border-[3px] border-black bg-white shadow-[20px_20px_0px_0px_rgba(0,0,0,0.05)] overflow-auto min-h-[600px] flex items-center justify-center">
+                            <div className="mermaid w-full text-center" ref={mermaidRef}>
+                                {mindmapData}
+                            </div>
                         </div>
+
+                        {showDebug && (
+                            <div className="animate-fade-in">
+                                <div className="bg-black text-white p-4 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                    <i className="fa-solid fa-bug"></i> Raw Mermaid Syntax
+                                </div>
+                                <pre className="p-8 border-[3px] border-black bg-gray-50 text-xs font-mono overflow-auto max-h-96">
+                                    {mindmapData}
+                                </pre>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="h-[500px] border-[3px] border-black border-dashed flex flex-col items-center justify-center text-center p-10">

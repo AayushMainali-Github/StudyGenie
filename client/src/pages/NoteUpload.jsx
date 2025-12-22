@@ -40,7 +40,7 @@ const NoteUpload = () => {
                 },
             };
             const { data } = await axios.post('http://localhost:5000/api/notes', formData, config);
-            navigate(`/note/${data._id}`);
+            navigate(`/notes/${data._id}`);
         } catch (error) {
             setError(error.response?.data?.message || 'Failed to generate notes');
         } finally {
