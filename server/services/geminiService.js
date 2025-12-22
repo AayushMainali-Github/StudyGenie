@@ -4,7 +4,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const generateNotes = async (text) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash"});
         
         const prompt = `
         You are an expert student tutor. Create comprehensive, well-structured study notes from the following text.

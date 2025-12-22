@@ -18,7 +18,7 @@ const extractText = async (file) => {
             throw new Error('Unsupported file type');
         }
     } catch (error) {
-        console.error('Error extraacting text:', error);
+        console.error('Error extracting text:', error);
         throw new Error('Failed to extract text from file');
     }
 };

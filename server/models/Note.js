@@ -20,7 +20,8 @@ const noteSchema = mongoose.Schema({
     tags: [String],
     fileType: {
         type: String,
-        enum: ['pdf', 'docx', 'txt', 'text'],
+        // Accept both extensions and mimetypes
+        enum: ['pdf', 'docx', 'txt', 'text', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'],
         default: 'text'
     }
 }, {
