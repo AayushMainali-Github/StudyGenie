@@ -38,7 +38,7 @@ const Dashboard = () => {
                     <p className="text-gray-500 font-light">Manage and access your AI-generated study materials</p>
                 </div>
                 <Link 
-                    to="/upload" 
+                    to="/notes/upload" 
                     className="flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-md hover:bg-gray-800 transition-all text-sm font-medium shadow-sm"
                 >
                     <i className="fa-solid fa-plus text-xs"></i>
@@ -65,7 +65,7 @@ const Dashboard = () => {
                     {notes.map((note) => (
                         <Link 
                             key={note._id} 
-                            to={`/note/${note._id}`}
+                            to={`/notes/${note._id}`}
                             className="group block p-6 bg-white border border-gray-200 rounded-lg hover:border-black transition-all hover:shadow-sm"
                         >
                             <div className="flex justify-between items-start mb-4">

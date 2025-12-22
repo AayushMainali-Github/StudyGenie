@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import NoteUpload from './pages/NoteUpload';
 import NoteView from './pages/NoteView';
+import FlashcardReview from './pages/FlashcardReview';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -116,8 +117,9 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-            <Route path="/upload" element={<PrivateRoute><NoteUpload /></PrivateRoute>} />
-            <Route path="/note/:id" element={<PrivateRoute><NoteView /></PrivateRoute>} />
+            <Route path="/notes/upload" element={<PrivateRoute><NoteUpload /></PrivateRoute>} />
+            <Route path="/notes/:id" element={<PrivateRoute><NoteView /></PrivateRoute>} />
+            <Route path="/flashcards/:noteId" element={<PrivateRoute><FlashcardReview /></PrivateRoute>} />
           </Routes>
         </div>
       </AuthProvider>
