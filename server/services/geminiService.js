@@ -7,15 +7,18 @@ const generateNotes = async (text) => {
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash"});
         
         const prompt = `
-        You are an expert student tutor. Create comprehensive, well-structured study notes from the following text.
+        You are an expert academic assistant. Create structured, high-quality study notes from the provided text.
         
-        Format the output in clean Markdown:
-        - Use ## for main topics.
-        - Use bullet points for key details.
-        - Highlight important terms in **bold**.
-        - Include valid HTML line breaks if necessary for spacing.
+        STRICT RULES:
+        1. DO NOT use any HTML tags (no <br>, no <div>, etc.).
+        2. Use ONLY clean Markdown.
+        3. Use ## for major sections and ### for sub-sections.
+        4. Add exactly TWO newlines between different sections for clarity.
+        5. Use bullet points for details.
+        6. Bold important concepts using **bold**.
+        7. If there are formulas, use clear text representation.
         
-        Text to summarize:
+        Text to convert into study notes:
         ${text}
         `;
 

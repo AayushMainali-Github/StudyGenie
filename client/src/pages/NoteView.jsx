@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
@@ -10,6 +10,7 @@ const NoteView = () => {
     const [note, setNote] = useState(null);
     const [loading, setLoading] = useState(true);
     const { user } = useContext(AuthContext);
+    const pdfRef = useRef();
 
     useEffect(() => {
         const fetchNote = async () => {
@@ -33,70 +34,83 @@ const NoteView = () => {
         }
     }, [id, user]);
 
-    const handleDownload = () => {
-        if (!note) return;
-        const element = document.createElement("a");
-        const file = new Blob([note.content], { type: 'text/markdown' });
-        element.href = URL.createObjectURL(file);
-        element.download = `${note.title.replace(/\s+/g, '_')}_StudyNotes.md`;
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+    const handleDownloadPDF = () => {
+        if (!note || !pdfRef.current) return;
+        
+        const element = pdfRef.current;
+        const opt = {
+            margin:       [15, 15],
+            filename:     `${note.title.replace(/\s+/g, '_')}_StudyNotes.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        // Standard PDF download using html2pdf
+        window.html2pdf().from(element).set(opt).save();
     };
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center pt-24 text-gray-500">
-            <div className="text-center font-mono text-xs tracking-widest text-gray-400 uppercase italic animate-pulse">
-                Parsing generated intelligence...
+        <div className="min-h-screen flex items-center justify-center pt-24 text-gray-400">
+            <div className="flex flex-col items-center gap-4 animate-pulse">
+                <i className="fa-solid fa-brain text-4xl text-gray-200"></i>
+                <span className="text-xs uppercase tracking-[0.3em] font-light">Synthesizing Notes</span>
             </div>
         </div>
     );
 
     if (!note) return (
-        <div className="min-h-screen flex items-center justify-center pt-24 text-gray-500">
+        <div className="min-h-screen flex items-center justify-center pt-24 text-gray-500 font-light italic">
             Note not found.
         </div>
     );
 
     return (
-        <div className="min-h-screen pt-24 pb-20 bg-gray-50">
+        <div className="min-h-screen pt-24 pb-20 bg-[#fafafa]">
             <div className="max-w-4xl mx-auto px-6">
-                <Link to="/dashboard" className="inline-flex items-center gap-2 text-[10px] font-bold text-gray-400 hover:text-black uppercase tracking-widest mb-8 transition-colors">
-                    <i className="fa-solid fa-arrow-left"></i>
-                    Back to Library
-                </Link>
+                <div className="mb-10 flex justify-between items-center">
+                    <Link to="/dashboard" className="inline-flex items-center gap-2 text-[10px] font-bold text-gray-400 hover:text-black uppercase tracking-widest transition-colors group">
+                        <i className="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                        Back to Library
+                    </Link>
+                    
+                    <button 
+                        onClick={handleDownloadPDF}
+                        className="flex items-center gap-2.5 px-6 py-2.5 bg-black text-white rounded-md hover:bg-gray-800 transition-all text-xs font-bold uppercase tracking-widest shadow-xl shadow-black/10 active:scale-95"
+                    >
+                        <i className="fa-solid fa-file-pdf"></i>
+                        Export as PDF
+                    </button>
+                </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="p-8 border-b border-gray-100 bg-white sticky top-0 z-10 flex justify-between items-center sm:flex-row flex-col gap-4">
-                        <div className="space-y-1 text-center sm:text-left">
-                            <h1 className="text-3xl font-bold text-gray-900 tracking-tight leading-tight">{note.title}</h1>
-                            <div className="flex items-center justify-center sm:justify-start gap-3 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                <span><i className="fa-solid fa-calendar mr-1.5"></i> {new Date(note.createdAt).toLocaleDateString()}</span>
-                                <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-                                <span className="truncate max-w-[150px]"><i className="fa-solid fa-file-lines mr-1.5"></i> {note.fileType || 'Text'}</span>
+                <div className="bg-white border border-gray-200 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] rounded-lg overflow-hidden">
+                    {/* Renderable area for PDF */}
+                    <div ref={pdfRef} className="p-12 md:p-16">
+                        <div className="mb-12 pb-10 border-b border-gray-100 space-y-3">
+                            <div className="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">
+                                <i className="fa-solid fa-sparkles"></i>
+                                AI Generated Note
+                            </div>
+                            <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-[1.1]">
+                                {note.title}
+                            </h1>
+                            <div className="flex items-center gap-4 text-[11px] text-gray-400 font-bold uppercase tracking-widest pt-2">
+                                <span className="flex items-center gap-1.5"><i className="fa-solid fa-calendar"></i> {new Date(note.createdAt).toLocaleDateString()}</span>
+                                <span className="w-1.5 h-1.5 bg-gray-200 rounded-full"></span>
+                                <span className="flex items-center gap-1.5"><i className="fa-solid fa-file-lines"></i> {note.fileType || 'Text Source'}</span>
                             </div>
                         </div>
-                        <div className="flex gap-2">
-                             <button 
-                                onClick={handleDownload}
-                                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-md hover:border-black hover:bg-black hover:text-white transition-all text-xs font-bold uppercase tracking-widest" 
-                                title="Download Markdown"
-                             >
-                                <i className="fa-solid fa-download"></i>
-                                Download
-                             </button>
-                        </div>
-                    </div>
 
-                    <div className="p-8 md:p-12">
+                        {/* Enhanced Markdown Styling */}
                         <div className="prose prose-slate max-w-none 
-                            prose-headings:text-gray-900 prose-headings:font-bold prose-headings:tracking-tight
-                            prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-100
-                            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-                            prose-p:text-gray-600 prose-p:leading-relaxed prose-p:font-light prose-p:text-lg
-                            prose-strong:text-gray-900 prose-strong:font-bold
-                            prose-ul:list-disc prose-ul:pl-6 prose-ul:space-y-2
-                            prose-li:text-gray-600 prose-li:text-lg font-sans">
+                            prose-headings:text-gray-900 prose-headings:font-black prose-headings:tracking-tighter
+                            prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-6 prose-h2:pb-4 prose-h2:border-b-2 prose-h2:border-gray-900
+                            prose-h3:text-2xl prose-h3:mt-12 prose-h3:mb-4 prose-h3:text-gray-800
+                            prose-p:text-gray-600 prose-p:leading-[1.8] prose-p:text-xl prose-p:font-light prose-p:mb-8
+                            prose-strong:text-black prose-strong:font-bold
+                            prose-ul:my-8 prose-ul:space-y-4
+                            prose-li:text-gray-600 prose-li:text-lg prose-li:font-light">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {note.content}
                             </ReactMarkdown>
@@ -104,24 +118,28 @@ const NoteView = () => {
                     </div>
                 </div>
 
-                <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <button className="group p-6 bg-black text-white rounded-xl hover:bg-gray-800 transition-all shadow-lg hover:-translate-y-1 text-left">
-                        <div className="flex justify-between items-center mb-2">
-                            <i className="fa-solid fa-bolt text-indigo-400 text-xl"></i>
-                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-50">Coming Soon</span>
+                <div className="mt-12 pt-12 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div className="p-8 bg-gray-50 rounded-lg border border-gray-200 group hover:border-black transition-all">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="bg-black text-white p-2 rounded-md">
+                                <i className="fa-solid fa-layer-group text-lg"></i>
+                            </div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-2 py-1 rounded border border-gray-100">Phase 4</span>
                         </div>
-                        <h4 className="text-lg font-bold mb-1">Generate Flashcards</h4>
-                        <p className="text-xs text-indigo-200 font-light opacity-80 leading-relaxed">Transform these notes into interactive memory cards for active recall study.</p>
-                    </button>
-                    
-                    <button className="group p-6 bg-white border border-gray-200 rounded-xl hover:border-black transition-all shadow-sm hover:-translate-y-1 text-left">
-                        <div className="flex justify-between items-center mb-2">
-                            <i className="fa-solid fa-circle-question text-gray-400 group-hover:text-black text-xl"></i>
-                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-30 group-hover:opacity-50">Coming Soon</span>
+                        <h4 className="text-xl font-bold text-gray-900 mb-2">Smart Flashcards</h4>
+                        <p className="text-gray-500 font-light text-sm leading-relaxed">Turn this content into spaced-repetition cards automatically.</p>
+                     </div>
+
+                     <div className="p-8 bg-gray-50 rounded-lg border border-gray-200 group hover:border-black transition-all">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="bg-white border border-gray-200 p-2 rounded-md">
+                                <i className="fa-solid fa-circle-question text-lg text-gray-400"></i>
+                            </div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-2 py-1 rounded border border-gray-100">Phase 5</span>
                         </div>
-                        <h4 className="text-lg font-bold mb-1 text-gray-900">Take a Quiz</h4>
-                        <p className="text-xs text-gray-500 font-light leading-relaxed">Knowledge assessment via AI-generated multiple choice questions.</p>
-                    </button>
+                        <h4 className="text-xl font-bold text-gray-900 mb-2">Knowledge Quiz</h4>
+                        <p className="text-gray-500 font-light text-sm leading-relaxed">Test your understanding with generated MCQs and feedback.</p>
+                     </div>
                 </div>
             </div>
         </div>
