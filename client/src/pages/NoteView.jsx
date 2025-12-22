@@ -169,6 +169,15 @@ const NoteView = () => {
                         <p className="text-gray-500 font-normal text-sm leading-relaxed">Simulate high-stakes examination environments with randomized challenges.</p>
                      </Link>
                 </div>
+
+                {/* AI Tutor Floating Button */}
+                <Link 
+                    to={`/chat/${id}`}
+                    className="fixed bottom-10 right-10 w-20 h-20 bg-black text-white rounded-none border-[3px] border-black flex items-center justify-center shadow-[10px_10px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all group z-50"
+                >
+                    <div className="absolute -top-12 right-0 bg-white border-[2px] border-black text-black px-3 py-1 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Consult Architect</div>
+                    <i className="fa-solid fa-comment-dots text-2xl"></i>
+                </Link>
             </div>
         </div>
     );

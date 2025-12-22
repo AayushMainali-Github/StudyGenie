@@ -8,6 +8,8 @@ import NoteUpload from './pages/NoteUpload';
 import NoteView from './pages/NoteView';
 import FlashcardReview from './pages/FlashcardReview';
 import QuizView from './pages/QuizView';
+import NoteChat from './pages/NoteChat';
+import StudyPlanner from './pages/StudyPlanner';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -34,6 +36,12 @@ const Navbar = () => {
                 className={`text-sm font-medium transition-colors ${isActive('/dashboard') ? 'text-black' : 'text-gray-500 hover:text-black'}`}
               >
                 Dashboard
+              </Link>
+              <Link 
+                to="/planner" 
+                className={`text-sm font-medium transition-colors ${isActive('/planner') ? 'text-black' : 'text-gray-500 hover:text-black'}`}
+              >
+                Planner
               </Link>
               <button 
                 onClick={logout}
@@ -118,10 +126,12 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+            <Route path="/planner" element={<PrivateRoute><StudyPlanner /></PrivateRoute>} />
             <Route path="/notes/upload" element={<PrivateRoute><NoteUpload /></PrivateRoute>} />
             <Route path="/notes/:id" element={<PrivateRoute><NoteView /></PrivateRoute>} />
             <Route path="/flashcards/:noteId" element={<PrivateRoute><FlashcardReview /></PrivateRoute>} />
             <Route path="/quiz/:noteId" element={<PrivateRoute><QuizView /></PrivateRoute>} />
+            <Route path="/chat/:noteId" element={<PrivateRoute><NoteChat /></PrivateRoute>} />
           </Routes>
         </div>
       </AuthProvider>
