@@ -53,9 +53,26 @@ const createNote = async (req, res) => {
 // @access  Private
 const getNotes = async (req, res) => {
     try {
-        const notes = await Note.find({ user: req.user._id }).sort({ createdAt: -1 });
-        res.json(notes);
+        const Flashcard = require('../models/Flashcard');
+        const Quiz = require('../models/Quiz');
+        
+        const notes = await Note.find({ user: req.user._id }).sort({ createdAt: -1 }).lean();
+        
+        const notesWithMetadata = await Promise.all(notes.map(async (note) => {
+            const [flashcardCount, quizCount] = await Promise.all([
+                Flashcard.countDocuments({ note: note._id }),
+                Quiz.countDocuments({ note: note._id })
+            ]);
+            return {
+                ...note,
+                hasFlashcards: flashcardCount > 0,
+                hasQuiz: quizCount > 0
+            };
+        }));
+
+        res.json(notesWithMetadata);
     } catch (error) {
+        console.error('getNotes error:', error);
         res.status(500).json({ message: 'Failed to fetch notes' });
     }
 };

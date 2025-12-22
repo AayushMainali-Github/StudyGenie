@@ -33,11 +33,19 @@ const Dashboard = () => {
         }
     }, [user]);
 
+    const stripMarkdown = (text) => {
+        return text
+            .replace(/[#*`_~]/g, '')
+            .replace(/\[.*?\]\(.*?\)/g, '')
+            .substring(0, 150)
+            .trim() + '...';
+    };
+
     return (
         <div className="min-h-screen pt-24 pb-20 px-6 max-w-7xl mx-auto">
             {/* Command Center Stats */}
             {!loading && stats && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 animate-fade-in">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 animate-fade-in text-black">
                     <div className="p-8 bg-black text-white border-[3px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,0.05)]">
                         <div className="flex justify-between items-start mb-6">
                             <i className="fa-solid fa-brain text-2xl opacity-50"></i>
@@ -88,44 +96,41 @@ const Dashboard = () => {
             </div>
 
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-48 bg-gray-50 animate-pulse rounded-lg border border-gray-100"></div>
+                        <div key={i} className="h-64 bg-gray-50 animate-pulse border-[3px] border-black/5"></div>
                     ))}
                 </div>
-            ) : notes.length === 0 ? (
-                <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-2xl">
-                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i className="fa-solid fa-note-sticky text-gray-300 text-2xl"></i>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900">No notes yet</h3>
-                    <p className="text-gray-500 mt-1 max-w-xs mx-auto text-sm">Upload your first document to start generating AI study notes.</p>
-                </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {notes.map((note) => (
                         <Link 
                             key={note._id} 
                             to={`/notes/${note._id}`}
-                            className="group block p-6 bg-white border border-gray-200 rounded-lg hover:border-black transition-all hover:shadow-sm"
+                            className="group block p-8 bg-white border-[3px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,0.05)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all relative overflow-hidden"
                         >
-                            <div className="flex justify-between items-start mb-4">
-                                <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded border ${note.fileType?.includes('pdf') ? 'text-red-600 border-red-100 bg-red-50' : 'text-blue-600 border-blue-100 bg-blue-50'}`}>
-                                    {note.fileType?.includes('pdf') ? 'PDF' : 'Text'}
+                            <div className="flex justify-between items-start mb-6">
+                                <span className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest border-[2px] ${note.fileType?.includes('pdf') ? 'text-red-600 border-red-600 bg-red-50' : 'text-black border-black bg-gray-50'}`}>
+                                    {note.fileType?.includes('pdf') ? 'PDF.DUMP' : 'TXT.DUMP'}
                                 </span>
-                                <span className="text-[10px] text-gray-400 font-mono">
+                                <span className="text-[10px] text-gray-300 font-bold uppercase tracking-widest">
                                     {new Date(note.createdAt).toLocaleDateString()}
                                 </span>
                             </div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2 truncate group-hover:text-black leading-tight">
+                            <h3 className="text-2xl font-black text-black mb-4 truncate leading-tight group-hover:italic italic transition-all">
                                 {note.title}
                             </h3>
-                            <p className="text-sm text-gray-500 line-clamp-2 font-light leading-relaxed">
-                                {note.content.substring(0, 100)}...
+                            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8 h-12 overflow-hidden opacity-70">
+                                {stripMarkdown(note.content)}
                             </p>
-                            <div className="mt-4 flex items-center gap-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest pt-4 border-t border-gray-50">
-                                <span><i className="fa-solid fa-bolt mr-1"></i> Flashcards</span>
-                                <span><i className="fa-solid fa-circle-question mr-1"></i> Quiz</span>
+                            <div className="flex items-center gap-6 pt-6 border-t-[2px] border-gray-100">
+                                <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-colors ${note.hasFlashcards ? 'text-pink-600' : 'text-gray-300'}`}>
+                                    <i className="fa-solid fa-bolt"></i> Flashcards
+                                </div>
+                                <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-colors ${note.hasQuiz ? 'text-cyan-600' : 'text-gray-300'}`}>
+                                    <i className="fa-solid fa-circle-question"></i> Quiz
+                                </div>
+                                <i className="fa-solid fa-arrow-right ml-auto text-gray-200 group-hover:text-black transition-colors"></i>
                             </div>
                         </Link>
                     ))}
