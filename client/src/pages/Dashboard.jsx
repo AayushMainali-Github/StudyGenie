@@ -130,6 +130,9 @@ const Dashboard = () => {
                                 <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-colors ${note.hasQuiz ? 'text-cyan-600' : 'text-gray-300'}`}>
                                     <i className="fa-solid fa-circle-question"></i> Quiz
                                 </div>
+                                <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-colors ${note.hasMindMap ? 'text-purple-600' : 'text-gray-300'}`}>
+                                    <i className="fa-solid fa-network-wired"></i> Map
+                                </div>
                                 <i className="fa-solid fa-arrow-right ml-auto text-gray-200 group-hover:text-black transition-colors"></i>
                             </div>
                         </Link>

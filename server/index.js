@@ -9,6 +9,7 @@ const flashcardRoutes = require('./routes/flashcardRoutes');
 const quizRoutes = require('./routes/quizRoutes');
 const statRoutes = require('./routes/statRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const mindmapRoutes = require('./routes/mindmapRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/stats', statRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/mindmaps', mindmapRoutes);
 app.get('/api/health', (req, res) => {
     res.status(200).json({ message: 'Server is running', status: 'OK' });
 });

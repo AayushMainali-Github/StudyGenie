@@ -66,7 +66,8 @@ const getNotes = async (req, res) => {
             return {
                 ...note,
                 hasFlashcards: flashcardCount > 0,
-                hasQuiz: quizCount > 0
+                hasQuiz: quizCount > 0,
+                hasMindMap: !!note.mindmap
             };
         }));
 

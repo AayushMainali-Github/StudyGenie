@@ -146,7 +146,18 @@ const NoteView = () => {
                     </div>
                 </div>
 
-                <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="mt-20 grid grid-cols-1 lg:grid-cols-3 gap-10">
+                     <Link 
+                        to={`/mindmap/${id}`}
+                        className="p-10 bg-white border-[3px] border-black group hover:translate-x-2 transition-all cursor-pointer block"
+                     >
+                        <div className="flex justify-between items-start mb-6">
+                            <i className="fa-solid fa-network-wired text-3xl text-black"></i>
+                        </div>
+                        <h4 className="text-2xl font-black mb-3">ARCHITECTURE MAP</h4>
+                        <p className="text-gray-500 font-normal text-sm leading-relaxed">Visualize the spatial hierarchy and hidden connections of knowledge.</p>
+                     </Link>
+
                      <Link 
                         to={`/flashcards/${id}`}
                         className="p-10 bg-black text-white group hover:translate-x-2 transition-all cursor-pointer block"

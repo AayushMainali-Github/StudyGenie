@@ -14,6 +14,9 @@ const noteSchema = mongoose.Schema({
         type: String, // The generated markdown content
         required: true,
     },
+    mindmap: {
+        type: String,
+    },
     originalText: {
         type: String, // Extracted text from file
     },

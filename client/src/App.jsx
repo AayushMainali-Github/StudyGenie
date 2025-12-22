@@ -10,6 +10,7 @@ import FlashcardReview from './pages/FlashcardReview';
 import QuizView from './pages/QuizView';
 import NoteChat from './pages/NoteChat';
 import StudyPlanner from './pages/StudyPlanner';
+import MindMapView from './pages/MindMapView';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -147,6 +148,7 @@ function App() {
             <Route path="/flashcards/:noteId" element={<PrivateRoute><FlashcardReview /></PrivateRoute>} />
             <Route path="/quiz/:noteId" element={<PrivateRoute><QuizView /></PrivateRoute>} />
             <Route path="/chat/:noteId" element={<PrivateRoute><NoteChat /></PrivateRoute>} />
+            <Route path="/mindmap/:noteId" element={<PrivateRoute><MindMapView /></PrivateRoute>} />
           </Routes>
         </div>
       </AuthProvider>
