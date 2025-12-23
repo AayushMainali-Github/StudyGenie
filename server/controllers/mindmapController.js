@@ -19,15 +19,22 @@ const generateMindMap = async (req, res) => {
         const prompt = `
         Deconstruct the following study notes into a logical Mermaid.js mindmap.
         
-        STRICT RULES:
-        1. Use "mindmap" syntax.
-        2. Root node should be the main title.
-        3. Use EXACTLY two spaces for each level of indentation.
-        4. No markdown code blocks. Output ONLY raw Mermaid syntax starting with "mindmap".
-        5. IMPORTANT: Node labels containing spaces, parentheses, or special characters MUST be enclosed in double quotes. Example: id["Label (Extra Info)"] or "This is a Label".
-        6. Keep node text concise.
+        STRICT FORMAT RULES:
+        1. Start with the keyword: mindmap
+        2. Use a root node with a circle shape and Markdown syntax: root(${note.title})
+        3. Use EXACTLY two spaces for EACH LEVEL of indentation.
+        4. ALL other nodes MUST use the Markdown String syntax: ["\`label\`"]
+        5. No markdown code blocks. Output ONLY raw Mermaid syntax.
+        6. Keep it consice and to the point.
         
-        Notes:
+        EXAMPLE STRUCTURE:
+        mindmap
+          root(Title)
+            ["\`Topic A\`"]
+              ["\`Subtopic A1\`"]
+            ["\`Topic B\`"]
+        
+        Notes content to deconstruct:
         ${note.content}
         `;
 
@@ -36,20 +43,43 @@ const generateMindMap = async (req, res) => {
         let text = response.text();
         
         // Clean if Gemini wraps it
-        text = text.replace(/```mermaid/g, '').replace(/```/g, '').trim();
+        text = text.replace(/```mermaid/g, '').replace(/```/g, '').replace(/^mindmap\n?/i, '').trim();
         
-        // Post-processing to ensure labels with special characters are quoted
-        // This is a simple regex attempt to fix common issues if Gemini forgets quotes
-        // We'll look for lines that look like:   Node Text (info)
-        // and turn them into:   "Node Text (info)"
         const lines = text.split('\n');
-        const processedLines = lines.map(line => {
-            const indent = line.match(/^\s*/)[0];
-            const content = line.trim();
-            if (content === 'mindmap' || content === '') return line;
-            if (content.startsWith('"') && content.endsWith('"')) return line;
-            // Quote the content if it's not already quoted
-            return `${indent}"${content.replace(/"/g, "'")}"`;
+        const processedLines = [];
+        
+        processedLines.push('mindmap');
+        
+        let baseIndent = -1;
+
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+            
+            const indentMatch = line.match(/^\s*/);
+            const currentIndent = indentMatch ? indentMatch[0].length : 0;
+            
+            if (baseIndent === -1) baseIndent = currentIndent;
+            
+            const relativeIndent = Math.max(0, currentIndent - baseIndent);
+            // Ensure 2-space steps
+            const normalizedLevel = Math.floor(relativeIndent / 2);
+            const indentStr = ' '.repeat(normalizedLevel * 2);
+            
+            // If it's the root with shape, keep it but ensure markdown
+            if (trimmed.includes('root(')) {
+                processedLines.push(`${indentStr}${trimmed}`);
+            } else {
+                // Strip existing quotes/markdown if Gemini added them incorrectly
+                const cleanLabel = trimmed
+                    .replace(/^\["[`]*/, '')
+                    .replace(/[`]*"\]$/, '')
+                    .replace(/^["']|["']$/g, '')
+                    .replace(/"/g, "'") // Escape inner quotes
+                    .trim();
+                
+                processedLines.push(`${indentStr}["\`${cleanLabel}\`"]`);
+            }
         });
         
         const finalizedText = processedLines.join('\n');

@@ -4,6 +4,7 @@ import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 
 const NoteUpload = () => {
+    const [title, setTitle] = useState('');
     const [file, setFile] = useState(null);
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ const NoteUpload = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!file && !text) {
-            setError('Please select a file or enter text');
+            setError('Please provide a document or raw intelligence');
             return;
         }
 
@@ -26,6 +27,8 @@ const NoteUpload = () => {
         setError('');
 
         const formData = new FormData();
+        if (title) formData.append('title', title);
+        
         if (file) {
             formData.append('file', file);
         } else {
@@ -42,78 +45,93 @@ const NoteUpload = () => {
             const { data } = await axios.post('http://localhost:5000/api/notes', formData, config);
             navigate(`/notes/${data._id}`);
         } catch (error) {
-            setError(error.response?.data?.message || 'Failed to generate notes');
+            setError(error.response?.data?.message || 'Deconstruction failed. Potential synaptic break.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-6 flex items-center justify-center bg-white">
-            <div className="w-full max-w-2xl space-y-8 animate-fade-in">
-                <div className="text-center space-y-2">
-                    <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Generate Study Notes</h1>
-                    <p className="text-gray-500 font-light">Upload a PDF or paste text to create AI summaries</p>
+        <div className="min-h-screen pt-32 pb-20 px-6 flex items-center justify-center bg-white">
+            <div className="w-full max-w-3xl space-y-12 animate-fade-in">
+                <div className="text-center space-y-4">
+                    <h1 className="text-6xl font-black text-black tracking-tighter uppercase italic">Deconstruct Intel</h1>
+                    <div className="flex items-center justify-center gap-4">
+                        <div className="h-1 w-12 bg-black"></div>
+                        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-400 italic">Ingestion Pipeline</p>
+                    </div>
                 </div>
 
                 {error && (
-                    <div className="p-4 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
+                    <div className="p-6 bg-red-600 text-white font-black uppercase tracking-widest text-[10px] border-[3px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                        <i className="fa-solid fa-triangle-exclamation mr-3 text-lg"></i>
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-8 bg-gray-50 p-8 rounded-2xl border border-gray-100">
+                <form onSubmit={handleSubmit} className="space-y-10 bg-white p-12 border-[3px] border-black shadow-[15px_15px_0px_0px_rgba(0,0,0,0.05)]">
+                    {/* Note Title */}
                     <div className="space-y-4">
-                        <label className="block text-sm font-bold text-gray-800 uppercase tracking-widest">
-                            Option 1: Upload Document
+                        <label className="block text-[11px] font-black text-black uppercase tracking-[0.2em] border-l-4 border-black pl-3">
+                            Subject Designation (Title)
                         </label>
-                        <div className="relative group">
-                            <input
-                                type="file"
-                                onChange={handleFileChange}
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                accept=".pdf,.doc,.docx,.txt"
-                            />
-                            <div className="border-2 border-dashed border-gray-200 rounded-xl py-12 px-6 text-center group-hover:border-black transition-all bg-white">
-                                <i className="fa-solid fa-cloud-arrow-up text-3xl text-gray-300 mb-4 group-hover:text-black transition-colors"></i>
-                                <p className="text-sm text-gray-600">
-                                    {file ? file.name : "Click to upload or drag & drop"}
-                                </p>
-                                <p className="text-[10px] text-gray-400 mt-2 uppercase tracking-tight">PDF, DOCX, TXT UP TO 10MB</p>
+                        <input
+                            type="text"
+                            className="w-full px-6 py-4 bg-white border-[3px] border-black focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none transition-all font-black text-lg placeholder:text-gray-200 placeholder:italic"
+                            placeholder="Enter subject title..."
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        {/* Option 1: File */}
+                        <div className="space-y-4">
+                            <label className="block text-[11px] font-black text-black uppercase tracking-[0.2em] border-l-4 border-black pl-3">
+                                File Upload (PDF/TXT)
+                            </label>
+                            <div className="relative group min-h-[200px] flex flex-col">
+                                <input
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    accept=".pdf,.doc,.docx,.txt"
+                                />
+                                <div className="flex-1 border-[3px] border-dashed border-gray-200 p-8 text-center group-hover:border-black transition-all bg-white flex flex-col items-center justify-center">
+                                    <i className="fa-solid fa-file-arrow-up text-4xl text-gray-100 group-hover:text-black transition-colors mb-4"></i>
+                                    <p className="text-xs font-black uppercase tracking-tight text-gray-400 group-hover:text-black">
+                                        {file ? file.name : "Select Intelligence Stream"}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className="h-px bg-gray-200 flex-1"></div>
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">OR</span>
-                        <div className="h-px bg-gray-200 flex-1"></div>
-                    </div>
-
-                    <div className="space-y-4">
-                        <label className="block text-sm font-bold text-gray-800 uppercase tracking-widest">
-                            Option 2: Paste Raw Text
-                        </label>
-                        <textarea
-                            className="w-full h-48 px-4 py-3 border border-gray-200 rounded-xl focus:ring-1 focus:ring-black focus:border-black outline-none transition-all text-sm font-light leading-relaxed resize-none bg-white"
-                            placeholder="Paste your study materials or lecture transcripts here..."
-                            value={text}
-                            onChange={(e) => setText(e.target.value)}
-                        />
+                        {/* Option 2: Text */}
+                        <div className="space-y-4">
+                            <label className="block text-[11px] font-black text-black uppercase tracking-[0.2em] border-l-4 border-black pl-3">
+                                Raw Data Stream (Text)
+                            </label>
+                            <textarea
+                                className="w-full h-[200px] px-6 py-4 border-[3px] border-black focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none transition-all text-sm font-bold resize-none bg-white placeholder:text-gray-200"
+                                placeholder="Paste raw intel here..."
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                            />
+                        </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full py-4 bg-black text-white font-bold rounded-xl shadow-lg hover:shadow-black/10 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-0.5 active:translate-y-0'}`}
+                        className={`w-full py-6 bg-black text-white font-black uppercase tracking-[0.4em] text-xs shadow-[12px_12px_0px_0px_rgba(0,0,0,0.1)] transition-all ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-none active:translate-y-0'}`}
                     >
                         {loading ? (
-                            <span className="flex items-center justify-center gap-3 italic">
-                                <i className="fa-solid fa-spinner fa-spin"></i>
-                                StudyGenie is thinking...
+                            <span className="flex items-center justify-center gap-4 italic">
+                                <i className="fa-solid fa-bolt-lightning fa-spin text-xl"></i>
+                                Fragmenting Data...
                             </span>
                         ) : (
-                            "Generate Notes"
+                            "Initiate Deconstruction"
                         )}
                     </button>
                 </form>
